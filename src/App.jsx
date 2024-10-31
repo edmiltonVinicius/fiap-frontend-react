@@ -1,21 +1,32 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import './App.css'
-import Root from './pages/Root'
-import Effects from './pages/Effects'
-import BookDetails from './pages/BookDetails'
-import Books from './pages/Books'
-import Login from './pages/Login'
-
-/**
- * COMPONENTES
- *  .jsx = javascript + html
- *  Todo componente tem que ter letra maiuscula
- *  Todo componente react é uma função que retorna html + javascript
- *  <NomeComponente></NomeComponente>
- *  <NomeComponente />
- */
+import './App.css';
+import Effects from './pages/Effects';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Root from './pages/Root';
+import Home from './pages/Home';
+import Books from './pages/Books';
+import BookDetails from './pages/BookDetails';
+import RootAuth from './pages/RootAuth';
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
+import AuthProvider from './providers/AuthProvider';
+import { SWRConfig } from 'swr';
+import { fetcher } from './helpers/api';
 
 const router = createBrowserRouter([
+  {
+    path: 'auth',
+    element: <RootAuth />,
+    children: [
+      {
+        path: 'sign-up',
+        element: <SignUp />,
+      },
+      {
+        path: 'login',
+        element: <Login />,
+      },
+    ],
+  },
   {
     path: '/',
     element: <Root />,
@@ -26,30 +37,28 @@ const router = createBrowserRouter([
       },
       {
         path: 'livros/:bookId',
-        element: <BookDetails />
+        element: <BookDetails />,
       },
       {
         path: 'livros',
-        element: <Books />
-      }
-    ]
+        element: <Books />,
+      },
+      {
+        path: '',
+        element: <Home />,
+      },
+    ],
   },
-  {
-    path: 'auth',
-    element: <Login />
-  }
-])
+]);
 
-/**
- * 
- * <Root>
- *  <Effects />
- * </Root>
- */
 function App() {
   return (
-    <RouterProvider router={router} />
-  )
+    <SWRConfig value={{ fetcher }}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </SWRConfig>
+  );
 }
 
-export default App
+export default App;
